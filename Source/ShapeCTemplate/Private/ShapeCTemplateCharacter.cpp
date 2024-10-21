@@ -134,8 +134,10 @@ void AShapeCTemplateCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+// Changes the player's form. 
 void AShapeCTemplateCharacter::ShapeShift(const FInputActionValue& Value)
 {
+	// Gets the currentindex of the Data asset if the DataAsset is assigned.
 	int32 currentIndex = 0;
 	if (PlayerFormsDataAsset)
 	{
@@ -144,30 +146,37 @@ void AShapeCTemplateCharacter::ShapeShift(const FInputActionValue& Value)
 		{
 			if (PlayerFormsDataAsset->PlayerForms[i].Form == this->GetClass())
 			{
-				currentIndex = i;
+				currentIndex = i; // Assigns the current index to match the index of the player's current form.
 			}
 			else
 			{
 				UE_LOG(LogTemp, Warning, TEXT("No valid index"));
 			}
 		}
-		FRotator CameraView = Controller->GetControlRotation();
+
+		FRotator CameraView = Controller->GetControlRotation(); // Used to maintain the camera's direction between transformations avoiding camera jumps.
+		// If the current form isn't at the end of the array then it transforms into the next form within the array.
 		if (PlayerFormsDataAsset->PlayerForms.IsValidIndex(currentIndex + 1))
 		{
+			// Spawns actor deferred to allow for stats to be assigned before spawning in the new player form.
 			AShapeCTemplateCharacter* NewPlayerForm = GetWorld()->SpawnActorDeferred<AShapeCTemplateCharacter>(PlayerFormsDataAsset->PlayerForms[currentIndex + 1].Form, GetActorTransform(), nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 			NewPlayerForm->PlayerStats = NewStats(PlayerFormsDataAsset->PlayerForms[currentIndex + 1].Form);
 			UGameplayStatics::FinishSpawningActor(NewPlayerForm, GetActorTransform());
-			//UGameplayStatics::GetPlayerController(GetWorld(), 0)->UnPossess();
+
+			// Changes the controlled form to the new form and deletes previous form.
 			UGameplayStatics::GetPlayerController(GetWorld(), 0)->Possess(NewPlayerForm);
 			UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetControlRotation(CameraView);
 			Destroy();
 		}
+		// If the current form is the last one in the array, it loops back around to the first elements within the array.
 		else
 		{
+			// Spawns actor deferred to allow for stats to be assigned before spawning in the new player form.
 			AShapeCTemplateCharacter* NewPlayerForm = GetWorld()->SpawnActorDeferred<AShapeCTemplateCharacter>(PlayerFormsDataAsset->PlayerForms[0].Form, GetActorTransform(), nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 			NewPlayerForm->PlayerStats = NewStats(PlayerFormsDataAsset->PlayerForms[0].Form);
 			UGameplayStatics::FinishSpawningActor(NewPlayerForm, GetActorTransform());
-			//UGameplayStatics::GetPlayerController(GetWorld(), 0)->UnPossess();
+
+			// Changes the controlled form to the new form and deletes previous form.
 			UGameplayStatics::GetPlayerController(GetWorld(), 0)->Possess(NewPlayerForm);
 			UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetControlRotation(CameraView);
 			Destroy();
@@ -175,6 +184,7 @@ void AShapeCTemplateCharacter::ShapeShift(const FInputActionValue& Value)
 	}
 }
 
+// Creates new player stats maintaining the Health/MaxHealth ratio.
 FPlayerStats AShapeCTemplateCharacter::NewStats(TSubclassOf<AShapeCTemplateCharacter> NewForm)
 {
 	FPlayerStats NewPlayerStats;
