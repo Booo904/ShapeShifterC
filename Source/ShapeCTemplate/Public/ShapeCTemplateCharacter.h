@@ -53,9 +53,11 @@ class AShapeCTemplateCharacter : public ACharacter
 public:
 	AShapeCTemplateCharacter();
 
+	// The player's stats inherited to every child class.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = PlayerStats)
 	FPlayerStats PlayerStats;
 
+	// The a pointer to the data asset created in engine. This is required to allow the shape shifting mechanic to function and must be assigned in-engine.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = PlayerStats)
 	UPlayerFormsAssetData* PlayerFormsDataAsset;
 	
@@ -71,7 +73,7 @@ protected:
 	// ShapeShift
 	void ShapeShift(const FInputActionValue& Value);
 
-	// New Stats
+	// New Stats (creates new stats. Primarily used to scale the player's current Health to maintain the same ratio of Health/MaxHealth between forms.
 	FPlayerStats NewStats(TSubclassOf<AShapeCTemplateCharacter> NewForm);
 			
 

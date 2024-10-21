@@ -1,3 +1,4 @@
+// This header contains all added structs and enums inside of it
 #pragma once
 
 #include "CoreMinimal.h"
@@ -5,7 +6,7 @@
 
 class AShapeCTemplateCharacter;
 
-// Player States
+// Player States (States are an unused enum that could be or could not be used for something).
 UENUM(BlueprintType)
 enum EPlayerStates
 {
@@ -14,7 +15,7 @@ enum EPlayerStates
 	Frightening UMETA(DisplayName = "Frightening")
 };
 
-// Player Stats
+// Player Stats (The general struct containing basic player stats).
 USTRUCT(BlueprintType)
 struct FPlayerStats
 {
@@ -34,7 +35,7 @@ struct FPlayerStats
 
 };
 
-// Player Forms Struct
+// Player Forms Struct (Used by the data asset to control the shape shifting mechanic.
 USTRUCT(BlueprintType)
 struct FPlayerForms
 {
